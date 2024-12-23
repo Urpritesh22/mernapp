@@ -15,22 +15,37 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+////////////////////////////////////////////////////////////////////////////////////////
+########################################################################################
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Complete Command Set to Run Dockerized Next.js App on ec2(Public Image)
+bash
+Copy code
+# Step 1: SSH into your EC2 instance
+# Replace <your-key-pair.pem> with your key file and <your-ec2-public-ip> with the actual public IP
+ssh -i <your-key-pair.pem> ubuntu@<your-ec2-public-ip>
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+# Step 2: Update package lists and install Docker
 
-## Learn More
+# On Ubuntu (for Ubuntu AMI)
+sudo apt-get update
+sudo apt-get install -y docker.io
+sudo systemctl enable docker
+sudo systemctl start docker
 
-To learn more about Next.js, take a look at the following resources:
+# On Amazon Linux 2 (if using Amazon Linux 2)
+# sudo yum update -y
+# sudo yum install -y docker
+# sudo service docker start
+# sudo usermod -a -G docker ec2-user
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Step 3: Verify Docker is installed and running
+sudo systemctl status docker
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+# Step 4: Pull the Docker image from Docker Hub (public image, no login required)
+docker pull priteshchopade22/newjs-app:latest
 
-## Deploy on Vercel
+# Step 5: Run the Docker container (map port 3000 in the container to port 80 on EC2)
+sudo docker run -d -p 80:3000 priteshchopade22/newjs-app:latest
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+# Step 6: Verify the app is running by visiting http://<your-ec2-public-ip> in your browser
